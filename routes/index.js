@@ -9,8 +9,9 @@ passport.use(new localStrategy(userModel.authenticate()));
 
 
 /* GET home page. */
-router.get('/',isLoggedIn, function (req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/',isLoggedIn,async function (req, res, next) {
+  const allProduct=await productModel.find()
+  res.render('index.ejs',{allProduct});
 });
 router.get('/register', function (req, res) {
   res.render('register', { title: 'Register' });
@@ -62,12 +63,12 @@ router.post('/createproduct',isLoggedIn,isSeller,upload.array("image"),async fun
     name:req.body.name,
     price:Number(req.body.price),
     description:req.body.description,
-    user:req.user,
+    user:req.user._id,
     image:req.files.map(function(file){
       return "/upload/"+file.filename
     })
   })
-  res.send(newproduct)
+  res.redirect("/")
   
 })
 
